@@ -3,7 +3,7 @@ import 'package:todo_list/models/toDo.dart';
 import 'package:todo_list/myWidgets/toDo_List_Item.dart';
 
 class ToDoListPage extends StatefulWidget {
-  ToDoListPage({ Key? key }) : super(key: key);
+  ToDoListPage({Key? key}) : super(key: key);
 
   @override
   State<ToDoListPage> createState() => _ToDoListPageState();
@@ -13,7 +13,6 @@ class _ToDoListPageState extends State<ToDoListPage> {
   final TextEditingController toDoController = TextEditingController();
 
   List<ToDo> toDos = [];
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +44,13 @@ class _ToDoListPageState extends State<ToDoListPage> {
                           ToDo newToDo = ToDo(
                             title: text,
                             dataHora: DateTime.now(),
-                          
                           );
                           toDos.add(newToDo);
                         });
                         toDoController.clear();
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.lightGreen,
+                        primary: Colors.deepPurpleAccent,
                         padding: const EdgeInsets.all(14),
                       ),
                       child: const Icon(
@@ -62,23 +60,30 @@ class _ToDoListPageState extends State<ToDoListPage> {
                     ),
                   ], //Children da Row
                 ),
-                
-                const SizedBox(height: 16,), //Widget SizedBox invisível para espaçar os componentes verticlamente(height)
-    
-                Flexible( // Flexible pra não dar erro de overflow
+
+                const SizedBox(
+                  height: 16,
+                ), //Widget SizedBox invisível para espaçar os componentes verticlamente(height)
+
+                Flexible(
+                  // Flexible pra não dar erro de overflow
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      for(ToDo toDo in toDos)
+                      for (ToDo toDo in toDos)
                         ToDoListItem(
-                          toDo: toDo, //passando o toDo como valor para o meu parâmetro title do meu Widget ToDoListItem
+                          toDo:
+                              toDo, //passando o toDo como valor para o meu parâmetro title do meu Widget ToDoListItem
+                          onComplete: onComplete,
                         ),
                     ],
                   ),
                 ),
-    
-                const SizedBox(height: 16,), //Widget SizedBox invisível para espaçar os componentes verticlamente(height)
-    
+
+                const SizedBox(
+                  height: 16,
+                ), //Widget SizedBox invisível para espaçar os componentes verticlamente(height)
+
                 Row(
                   children: [
                     Expanded(
@@ -86,16 +91,16 @@ class _ToDoListPageState extends State<ToDoListPage> {
                         'Você possui ${toDos.length} tarefas pendentes', //incrementei pra pegar o tamanho da lista
                       ),
                     ),
-    
+
                     const SizedBox(width: 8), //widget invisível afastando
-    
+
                     ElevatedButton(
-                     onPressed: () {}, 
-                     style: ElevatedButton.styleFrom(
-                        primary: Colors.lightGreen,
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.deepPurpleAccent,
                         padding: const EdgeInsets.all(14),
                       ),
-                     child: const Text('Limpar tudo'),
+                      child: const Text('Limpar tudo'),
                     )
                   ], //Children Da Row
                 ),
@@ -105,5 +110,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
         ),
       ),
     );
+  }
+
+  void onComplete(ToDo toDO) {
+    setState(() {
+      toDos.remove(toDO);
+    });
   }
 }
