@@ -14,6 +14,9 @@ class _ToDoListPageState extends State<ToDoListPage> {
 
   List<ToDo> toDos = [];
 
+  ToDo? completedToDo;
+  int? completedToDoPos;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -95,7 +98,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                     const SizedBox(width: 8), //widget invisível afastando
 
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: showCompleteToDosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         primary: Colors.deepPurpleAccent,
                         padding: const EdgeInsets.all(14),
@@ -113,8 +116,79 @@ class _ToDoListPageState extends State<ToDoListPage> {
   }
 
   void onComplete(ToDo toDO) {
+    completedToDo = toDO;
+    completedToDoPos = toDos.indexOf(toDO);
+
     setState(() {
       toDos.remove(toDO);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      //SNACK BAR DESFAZER DELEÇÃO
+      SnackBar(
+        content: Text(
+          'Tarefa ${toDO.title} foi realizada com sucesso.',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 61, 0, 71),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 234, 234, 255),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () {
+            setState(() {
+              toDos.insert(completedToDoPos!, completedToDo!);
+            });
+          },
+          textColor: Color.fromARGB(255, 79, 0, 216),
+          disabledTextColor: Color.fromARGB(255, 255, 0, 191),
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    ); //Metodo scaffold
+  }
+
+  void showCompleteToDosConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar tudo?'),
+        content:
+            const Text('Você tem certeza que deseja apagar todas as tarefas?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+              primary: Color.fromARGB(255, 41, 223, 255),
+            ),
+            child: const Text(
+              'Cancelar',
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAllToDos();
+            },
+            style: TextButton.styleFrom(
+              primary: Colors.red,
+            ),
+            child: const Text(
+              'Limpar tudo',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deleteAllToDos() {
+    setState(() {
+      toDos.clear();
     });
   }
 }
